@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "campaign": {
+    "id": "fixture-campaign",
+    "name": "Browser contract fixture",
+    "gmMacroButtonProperties": [{"command": "fixture-private-macro"}],
+    "properties": {"private_fixture_data": "not-player-content"},
+    "zones": [
+      {
+        "id": "courtyard",
+        "name": "Courtyard internal title",
+        "playerAlias": "Courtyard",
+        "isVisible": true,
+        "width": 800,
+        "height": 600,
+        "topology": {"private_fixture_geometry": true},
+        "exposedAreaMeta": {"bob": {"private_fixture_fog": true}},
+        "tokens": [
+          {"id": "hero", "name": "Hero", "x": 50, "y": 100, "width": 50, "height": 50, "layer": "TOKEN", "isVisible": true, "ownerList": ["alice"], "ownerType": 0, "currentImageAsset": "hero-art", "gmNotes": "fixture-secret-note", "gmName": "fixture-secret-name", "properties": {"secret": "fixture-secret-stat"}, "macroProperties": {"0": {"command": "fixture-secret-command"}}},
+          {"id": "guard", "name": "Guard", "x": 250, "y": 100, "width": 50, "height": 50, "layer": "TOKEN", "isVisible": true, "ownerList": [], "gmNotes": "fixture-secret-order"},
+          {"id": "ambusher", "name": "Fixture hidden enemy", "x": 400, "y": 100, "layer": "TOKEN", "isVisible": false},
+          {"id": "gm-marker", "name": "Fixture GM marker", "x": 500, "y": 100, "layer": "GM", "isVisible": true},
+          {"id": "bob-private", "name": "Bob only", "x": 600, "y": 100, "layer": "TOKEN", "isVisible": true, "visibleOnlyToOwner": true, "ownerList": ["bob"], "ownerType": 0}
+        ]
+      },
+      {"id": "gm-vault", "name": "Fixture private map", "isVisible": false, "tokens": []}
+    ]
+  },
+  "visibility": {
+    "alice": {"courtyard": {"revision": 7, "visible_token_ids": ["hero", "guard", "ambusher", "gm-marker", "bob-private"], "asset_ids": ["hero-art", "view-alice"], "rendered_asset_id": "view-alice"}},
+    "bob": {"courtyard": {"revision": 8, "visible_token_ids": ["guard", "bob-private"], "asset_ids": ["view-bob"], "rendered_asset_id": "view-bob"}}
+  },
+  "assets": {
+    "hero-art": {"content_type": "image/png", "data_base64": "c3ludGhldGljLWZpeHR1cmUtaGVyby1ieXRlcw=="},
+    "view-alice": {"content_type": "image/png", "data_base64": "c3ludGhldGljLWFsaWNlLXZpZXctYnl0ZXM="},
+    "view-bob": {"content_type": "image/png", "data_base64": "c3ludGhldGljLWJvYi12aWV3LWJ5dGVz"},
+    "gm-private": {"content_type": "image/png", "data_base64": "c3ludGhldGljLXByaXZhdGUtYnl0ZXM="},
+    "script": {"content_type": "application/javascript", "data_base64": "bm90LWV4ZWN1dGVk"}
+  }
+}

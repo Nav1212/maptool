@@ -16,18 +16,23 @@ package net.rptools.maptool.model.library.addon;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import net.rptools.maptool.addon.InstallationPlanner;
 import net.rptools.maptool.events.MapToolEventBus;
 import net.rptools.maptool.model.library.AddOnsAddedEvent;
 import net.rptools.maptool.model.library.AddOnsRemovedEvent;
 import net.rptools.maptool.model.library.Library;
-import net.rptools.maptool.model.library.proto.AddOnLibraryDto;
+import net.rptools.maptool.model.library.addon.compatibility.AddOnCompatibility;
+import net.rptools.maptool.model.library.addon.compatibility.AddOnCompatibilityException;
 import net.rptools.maptool.model.library.proto.AddOnLibraryListDto;
 import net.rptools.maptool.model.library.proto.AddOnLibraryListDto.AddOnLibraryEntryDto;
 
@@ -39,6 +44,25 @@ public class AddOnLibraryManager {
 
   /** The add-on libraries that are registered. */
   private final Map<String, AddOnLibrary> namespaceLibraryMap = new ConcurrentHashMap<>();
+
+  private final Supplier<String> mapToolVersion;
+
+  public AddOnLibraryManager() {
+    this(AddOnCompatibility::currentVersion);
+  }
+
+  AddOnLibraryManager(Supplier<String> mapToolVersion) {
+    this.mapToolVersion = mapToolVersion;
+  }
+
+  public synchronized InstallationPlanner.Plan preflight(
+      Collection<AddOnLibrary> libraries, boolean replaceExisting) {
+    return InstallationPlanner.plan(
+        mapToolVersion.get(),
+        namespaceLibraryMap.values().stream().map(AddOnLibrary::getCompatibilityManifest).toList(),
+        libraries.stream().map(AddOnLibrary::getCompatibilityManifest).toList(),
+        replaceExisting);
+  }
 
   /**
    * Is there a add-on library that would handle this path. This just checks the protocol and
@@ -72,17 +96,64 @@ public class AddOnLibraryManager {
    * @throws IllegalStateException if there is already a add-on library with the same namespace.
    */
   public void registerLibrary(AddOnLibrary library) {
-    String namespace = library.getNamespace().join().toLowerCase();
+    registerLibraries(List.of(library), false);
+  }
 
-    var registeredLib = namespaceLibraryMap.computeIfAbsent(namespace, k -> library);
-    if (registeredLib != library) {
-      throw new IllegalStateException("Library is already registered");
+  /** Validates the entire proposed set before removing or initializing any active library. */
+  public synchronized void registerLibraries(
+      Collection<AddOnLibrary> libraries, boolean replaceExisting) {
+    var plan = preflight(libraries, replaceExisting);
+    if (!plan.canInstall()) throw new AddOnCompatibilityException(plan);
+    var candidates =
+        libraries.stream()
+            .collect(
+                Collectors.toMap(
+                    library -> library.getCompatibilityManifest().namespace(), library -> library));
+    var previous = new HashMap<String, AddOnLibrary>();
+    for (String namespace : candidates.keySet()) {
+      var old = namespaceLibraryMap.get(namespace);
+      if (old != null) previous.put(namespace, old);
     }
 
-    library.initialize();
-    new MapToolEventBus()
-        .getMainEventBus()
-        .post(new AddOnsAddedEvent(Set.of(library.getLibraryInfo().join())));
+    // Make all approved identities available before dependency-ordered initialization.
+    // The campaign data namespace is retained; a replacement is not a remove/reimport.
+    try {
+      previous.values().forEach(AddOnLibrary::cleanup);
+      namespaceLibraryMap.putAll(candidates);
+      for (var manifest : plan.installationOrder())
+        candidates.get(manifest.namespace()).initialize();
+    } catch (RuntimeException failure) {
+      for (String namespace : candidates.keySet()) {
+        candidates.get(namespace).cleanup();
+        namespaceLibraryMap.remove(namespace);
+      }
+      namespaceLibraryMap.putAll(previous);
+      for (var library : previous.values()) {
+        try {
+          library.initialize();
+        } catch (RuntimeException restoreFailure) {
+          failure.addSuppressed(restoreFailure);
+        }
+      }
+      // Arbitrary initialization macros are not transactional; do not claim their effects roll
+      // back.
+      throw failure;
+    }
+    var bus = new MapToolEventBus().getMainEventBus();
+    if (!previous.isEmpty()) {
+      bus.post(
+          new AddOnsRemovedEvent(
+              previous.values().stream()
+                  .map(library -> library.getLibraryInfo().join())
+                  .collect(Collectors.toSet())));
+    }
+    if (!candidates.isEmpty()) {
+      bus.post(
+          new AddOnsAddedEvent(
+              candidates.values().stream()
+                  .map(library -> library.getLibraryInfo().join())
+                  .collect(Collectors.toSet())));
+    }
   }
 
   /**
@@ -90,8 +161,8 @@ public class AddOnLibraryManager {
    *
    * @param namespace the namespace of the library to deregister.
    */
-  public void deregisterLibrary(String namespace) {
-    var removed = namespaceLibraryMap.remove(namespace.toLowerCase());
+  public synchronized void deregisterLibrary(String namespace) {
+    var removed = namespaceLibraryMap.remove(namespace.toLowerCase(Locale.ROOT));
     if (removed != null) {
       removed.cleanup();
       new MapToolEventBus()
@@ -144,18 +215,8 @@ public class AddOnLibraryManager {
         () -> {
           var dto = AddOnLibraryListDto.newBuilder();
           for (var library : namespaceLibraryMap.values()) {
-            var detailDto = AddOnLibraryDto.newBuilder();
-            detailDto.setName(library.getName().join());
-            detailDto.setVersion(library.getVersion().join());
-            detailDto.setWebsite(library.getWebsite().join());
-            detailDto.setGitUrl(library.getGitUrl().join());
-            detailDto.addAllAuthors(Arrays.asList(library.getAuthors().join()));
-            detailDto.setLicense(library.getLicense().join());
-            detailDto.setNamespace(library.getNamespace().join());
-            detailDto.setDescription(library.getDescription().join());
-            detailDto.setShortDescription(library.getShortDescription().join());
             var campDto = AddOnLibraryEntryDto.newBuilder();
-            campDto.setDetails(detailDto);
+            campDto.setDetails(library.toDetailsDto());
             campDto.setMd5Hash(library.getAssetKey().toString());
             dto.addLibraries(campDto);
           }

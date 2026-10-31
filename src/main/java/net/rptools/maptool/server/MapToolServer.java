@@ -191,6 +191,23 @@ public class MapToolServer {
     return null;
   }
 
+  /** Resolve roles from the authenticated installed connection, not message-supplied names. */
+  public Player getPlayerForConnection(String connectionId) {
+    return connectionId == null ? null : playerMap.get(connectionId.toUpperCase());
+  }
+
+  /** Re-send private content individually so sharing revocation also clears old client views. */
+  public void sendCampaignContentSnapshots() {
+    Map<String, Player> recipients;
+    synchronized (playerMap) {
+      recipients = new HashMap<>(playerMap);
+    }
+    recipients.forEach(
+        (connectionId, recipient) ->
+            net.rptools.maptool.server.content.ContentServerProtocol.sendSnapshot(
+                this, connectionId, recipient, ""));
+  }
+
   public boolean isPersonalServer() {
     return config == null;
   }
@@ -280,6 +297,8 @@ public class MapToolServer {
 
     var msg2 = SetCampaignMsg.newBuilder().setCampaign(campaign.toDto());
     sendMessage(conn.getId(), Message.newBuilder().setSetCampaignMsg(msg2).build());
+    net.rptools.maptool.server.content.ContentServerProtocol.sendSnapshot(
+        this, conn.getId(), connPlayer, "");
   }
 
   public void bootPlayer(String playerId) {

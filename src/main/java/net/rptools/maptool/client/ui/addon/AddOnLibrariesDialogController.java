@@ -18,6 +18,7 @@ import com.google.common.eventbus.Subscribe;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
@@ -115,33 +116,46 @@ public class AddOnLibrariesDialogController extends AbstractSwingJavaFXDialogCon
     assert addButton != null
         : "fx:id=\"addButton\" was not injected: check your FXML file 'AddOnLibrariesDialog.fxml'.";
     assert addOnsTable != null
-        : "fx:id=\"addOnsTable\" was not injected: check your FXML file 'AddOnLibrariesDialog.fxml'.";
+        : "fx:id=\"addOnsTable\" was not injected: check your FXML file"
+            + " 'AddOnLibrariesDialog.fxml'.";
     assert closeButton != null
-        : "fx:id=\"closeButton\" was not injected: check your FXML file 'AddOnLibrariesDialog.fxml'.";
+        : "fx:id=\"closeButton\" was not injected: check your FXML file"
+            + " 'AddOnLibrariesDialog.fxml'.";
     assert removeLibButton != null
-        : "fx:id=\"removeLibButton\" was not injected: check your FXML file 'AddOnLibrariesDialog.fxml'.";
+        : "fx:id=\"removeLibButton\" was not injected: check your FXML file"
+            + " 'AddOnLibrariesDialog.fxml'.";
     assert labelName != null
         : "fx:id=\"labelName\" was not injected: check your FXML file 'AddOnLibrariesDialog.fxml'.";
     assert labelVersion != null
-        : "fx:id=\"labelVersion\" was not injected: check your FXML file 'AddOnLibrariesDialog.fxml'.";
+        : "fx:id=\"labelVersion\" was not injected: check your FXML file"
+            + " 'AddOnLibrariesDialog.fxml'.";
     assert labelNamespace != null
-        : "fx:id=\"labelNamespace\" was not injected: check your FXML file 'AddOnLibrariesDialog.fxml'.";
+        : "fx:id=\"labelNamespace\" was not injected: check your FXML file"
+            + " 'AddOnLibrariesDialog.fxml'.";
     assert labelShortDescription != null
-        : "fx:id=\"labelShortDescription\" was not injected: check your FXML file 'AddOnLibrariesDialog.fxml'.";
+        : "fx:id=\"labelShortDescription\" was not injected: check your FXML file"
+            + " 'AddOnLibrariesDialog.fxml'.";
     assert linkWebsite != null
-        : "fx:id=\"linkWebsite\" was not injected: check your FXML file 'AddOnLibrariesDialog.fxml'.";
+        : "fx:id=\"linkWebsite\" was not injected: check your FXML file"
+            + " 'AddOnLibrariesDialog.fxml'.";
     assert linkGitURL != null
-        : "fx:id=\"linkGitURL\" was not injected: check your FXML file 'AddOnLibrariesDialog.fxml'.";
+        : "fx:id=\"linkGitURL\" was not injected: check your FXML file"
+            + " 'AddOnLibrariesDialog.fxml'.";
     assert labelAuthors != null
-        : "fx:id=\"labelAuthors\" was not injected: check your FXML file 'AddOnLibrariesDialog.fxml'.";
+        : "fx:id=\"labelAuthors\" was not injected: check your FXML file"
+            + " 'AddOnLibrariesDialog.fxml'.";
     assert labelLicense != null
-        : "fx:id=\"labelLicense\" was not injected: check your FXML file 'AddOnLibrariesDialog.fxml'.";
+        : "fx:id=\"labelLicense\" was not injected: check your FXML file"
+            + " 'AddOnLibrariesDialog.fxml'.";
     assert textAreaDescription != null
-        : "fx:id=\"textAreaDescription\" was not injected: check your FXML file 'AddOnLibrariesDialog.fxml'.";
+        : "fx:id=\"textAreaDescription\" was not injected: check your FXML file"
+            + " 'AddOnLibrariesDialog.fxml'.";
     assert buttonViewLicenceFile != null
-        : "fx:id=\"buttonViewLicenceFile\" was not injected: check your FXML file 'AddOnLibrariesDialog.fxml'.";
+        : "fx:id=\"buttonViewLicenceFile\" was not injected: check your FXML file"
+            + " 'AddOnLibrariesDialog.fxml'.";
     assert buttonViewReadMeFile != null
-        : "fx:id=\"buttonViewReadMeFile\" was not injected: check your FXML file 'AddOnLibrariesDialog.fxml'.";
+        : "fx:id=\"buttonViewReadMeFile\" was not injected: check your FXML file"
+            + " 'AddOnLibrariesDialog.fxml'.";
   }
 
   @Override
@@ -311,7 +325,10 @@ public class AddOnLibrariesDialogController extends AbstractSwingJavaFXDialogCon
     linkGitURL.setText(libraryInfo.gitUrl());
     linkWebsite.setText(libraryInfo.website());
     labelLicense.setText(libraryInfo.license());
-    textAreaDescription.setText(libraryInfo.description());
+    textAreaDescription.setText(
+        libraryInfo.description()
+            + "\n\n"
+            + new LibraryManager().getAddOnCompatibilityDescription(libraryInfo.namespace()));
     buttonViewLicenceFile.setDisable(
         libraryInfo.licenseFile() == null || libraryInfo.licenseFile().isEmpty());
     buttonViewReadMeFile.setDisable(
@@ -333,11 +350,15 @@ public class AddOnLibrariesDialogController extends AbstractSwingJavaFXDialogCon
               var addOnLibrary = new AddOnLibraryImporter().importFromFile(libFile);
               var libraryManager = new LibraryManager();
               String namespace = addOnLibrary.getNamespace().get();
+              var plan = libraryManager.preflightAddOnLibraries(List.of(addOnLibrary), true);
+              if (!plan.canInstall()) {
+                MapTool.showError(plan.summary());
+                return;
+              }
               if (libraryManager.addOnLibraryExists(addOnLibrary.getNamespace().get())) {
                 if (!MapTool.confirm(I18N.getText("library.error.addOnLibraryExists", namespace))) {
                   return;
                 }
-                libraryManager.deregisterAddOnLibrary(namespace);
               }
               libraryManager.reregisterAddOnLibrary(addOnLibrary);
             } catch (IOException | InterruptedException | ExecutionException e) {

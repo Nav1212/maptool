@@ -47,6 +47,8 @@ message CampaignDto {
   repeated ZoneDto zones = 10;
   repeated MacroButtonPropertiesDto gm_macro_button_properties = 11;
   optional string landing_map_id = 12;
+  // Sequence metadata only. Private content is sent in per-viewer snapshots.
+  int64 campaign_content_revision = 200;
 }
 
 message LookupTableDto {

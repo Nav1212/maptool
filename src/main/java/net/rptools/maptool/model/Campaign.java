@@ -49,6 +49,11 @@ public class Campaign implements Serializable {
 
   private String name; // the name of the campaign, to be displayed in the MapToolFrame title bar
 
+  // Host-owned persistence. Deliberately excluded from CampaignDto: content is sent in
+  // authenticated, viewer-filtered snapshots instead of broadcasting private journals.
+  private String campaignContentJson = "";
+  private long campaignContentRevision;
+
   // Static data isn't written to the campaign file when saved; these two fields hold the output
   // location and type, and the
   // settings of all JToggleButton objects (JRadioButtons and JCheckBoxes).
@@ -115,6 +120,39 @@ public class Campaign implements Serializable {
     return this.landingMapId;
   }
 
+  public synchronized String getCampaignContentJson() {
+    return campaignContentJson == null ? "" : campaignContentJson;
+  }
+
+  public synchronized long getCampaignContentRevision() {
+    return campaignContentRevision;
+  }
+
+  public record CampaignContentState(String json, long revision) {}
+
+  public synchronized CampaignContentState getCampaignContentState() {
+    return new CampaignContentState(getCampaignContentJson(), campaignContentRevision);
+  }
+
+  /** Caller must authenticate the sender before accepting an update. */
+  public synchronized boolean updateCampaignContent(long expectedRevision, String json) {
+    if (expectedRevision != campaignContentRevision) return false;
+    var replacement =
+        new net.rptools.maptool.content.ContentRevisionState(
+                getCampaignContentJson(), campaignContentRevision)
+            .update(expectedRevision, json);
+    campaignContentJson = replacement.json();
+    campaignContentRevision = replacement.revision();
+    return true;
+  }
+
+  /** Install a trusted server snapshot; a player snapshot contains only that player's data. */
+  public synchronized void installCampaignContentSnapshot(String json, long revision) {
+    var replacement = new net.rptools.maptool.content.ContentRevisionState(json, revision);
+    campaignContentJson = replacement.json();
+    campaignContentRevision = replacement.revision();
+  }
+
   @Serial
   private Object readResolve() {
     if (exportSettings == null) {
@@ -157,6 +195,8 @@ public class Campaign implements Serializable {
     id = campaign.getId();
     name = campaign.getName();
     landingMapId = campaign.landingMapId;
+    campaignContentJson = campaign.getCampaignContentJson();
+    campaignContentRevision = campaign.getCampaignContentRevision();
 
     /*
      * Don't forget that since these are new zones AND new tokens created here from the old one,
@@ -613,6 +653,15 @@ public class Campaign implements Serializable {
 
     assetSet.addAll(getCampaignProperties().getAllImageAssets());
 
+    // Journal-only images are not necessarily referenced by a token, drawing, or campaign
+    // property. Include their real campaign asset keys in the archive as well.
+    net.rptools.maptool.content.ContentStore.fromJson(getCampaignContentJson())
+        .referencedAssetIds()
+        .stream()
+        .filter(asset -> asset.matches("[0-9a-fA-F]{32}"))
+        .map(MD5Key::new)
+        .forEach(assetSet::add);
+
     return assetSet;
   }
 
@@ -692,6 +741,7 @@ public class Campaign implements Serializable {
     var campaign = new Campaign();
     campaign.id = GUID.valueOf(dto.getId());
     campaign.name = dto.getName();
+    campaign.campaignContentRevision = Math.max(0, dto.getCampaignContentRevision());
     campaign.landingMapId = dto.hasLandingMapId() ? GUID.valueOf(dto.getLandingMapId()) : null;
     campaign.hasUsedFogToolbar =
         dto.hasHasUsedFogToolbar() ? dto.getHasUsedFogToolbar().getValue() : null;
@@ -717,6 +767,7 @@ public class Campaign implements Serializable {
   public CampaignDto toDto() {
     var dto = CampaignDto.newBuilder();
     dto.setId(id.toString());
+    dto.setCampaignContentRevision(getCampaignContentRevision());
     dto.setName(name);
     if (landingMapId != null) {
       dto.setLandingMapId(landingMapId.toString());

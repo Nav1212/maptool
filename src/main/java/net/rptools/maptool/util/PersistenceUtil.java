@@ -852,6 +852,7 @@ public class PersistenceUtil {
             builder);
     var listDto = builder.build();
 
+    var libraries = new java.util.ArrayList<AddOnLibrary>();
     for (var library : listDto.getLibrariesList()) {
       String libraryData = DROP_IN_LIBRARY_ASSET_DIR + library.getMd5Hash();
       byte[] bytes = packedFile.getFileAsInputStream(libraryData).readAllBytes();
@@ -861,7 +862,11 @@ public class PersistenceUtil {
         AssetManager.putAsset(asset);
       }
       AddOnLibrary addOnLibrary = new AddOnLibraryImporter().importFromAsset(asset);
-      libraryManager.registerAddOnLibrary(addOnLibrary);
+      libraries.add(addOnLibrary);
+    }
+    if (!libraryManager.registerAddOnLibraries(libraries, false)) {
+      throw new IOException(
+          "Campaign add-on requirements were not satisfied; no bundles were activated.");
     }
   }
 

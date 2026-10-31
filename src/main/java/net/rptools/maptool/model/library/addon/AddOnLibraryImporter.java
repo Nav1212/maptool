@@ -31,6 +31,7 @@ import net.rptools.maptool.language.I18N;
 import net.rptools.maptool.model.Asset;
 import net.rptools.maptool.model.Asset.Type;
 import net.rptools.maptool.model.AssetManager;
+import net.rptools.maptool.model.library.addon.compatibility.AddOnCompatibility;
 import net.rptools.maptool.model.library.proto.AddOnLibraryDto;
 import net.rptools.maptool.model.library.proto.AddOnLibraryEventsDto;
 import net.rptools.maptool.model.library.proto.AddOnStatSheetsDto;
@@ -154,6 +155,13 @@ public class AddOnLibraryImporter {
       JsonFormat.parser()
           .ignoringUnknownFields()
           .merge(new InputStreamReader(zip.getInputStream(entry)), builder);
+
+      // Reject malformed declarations before processAssets mutates the asset registry.
+      try {
+        AddOnCompatibility.validateMetadata(builder.build());
+      } catch (IllegalArgumentException e) {
+        throw new IOException(e.getMessage(), e);
+      }
 
       // MT MacroScript properties
       var pathAssetMap = processAssets(builder.getNamespace(), zip);

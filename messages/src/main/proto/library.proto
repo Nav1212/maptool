@@ -20,6 +20,15 @@ message AddOnLibraryDto {
   bool allowsUriAccess = 26;
   string license_file = 27;
   string read_me_file = 28;
+  // Optional compatibility declarations; absent fields preserve legacy bundles.
+  string supported_map_tool_versions = 29;
+  repeated AddOnDependencyDto dependencies = 30;
+}
+
+message AddOnDependencyDto {
+  string namespace = 1;
+  string version_range = 2;
+  bool optional = 3;
 }
 
 message MTScriptPropertiesDto {

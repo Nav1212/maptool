@@ -33,6 +33,7 @@ import java.util.concurrent.CompletionException;
 import javax.script.ScriptException;
 import javax.swing.SwingUtilities;
 import net.rptools.lib.MD5Key;
+import net.rptools.maptool.addon.AddOnManifest;
 import net.rptools.maptool.client.MapTool;
 import net.rptools.maptool.client.MapToolMacroContext;
 import net.rptools.maptool.client.MapToolVariableResolver;
@@ -51,6 +52,7 @@ import net.rptools.maptool.model.library.LibraryInfo;
 import net.rptools.maptool.model.library.LibraryNotValidException;
 import net.rptools.maptool.model.library.LibraryNotValidException.Reason;
 import net.rptools.maptool.model.library.MTScriptMacroInfo;
+import net.rptools.maptool.model.library.addon.compatibility.AddOnCompatibility;
 import net.rptools.maptool.model.library.data.LibraryData;
 import net.rptools.maptool.model.library.proto.*;
 import net.rptools.maptool.model.library.proto.AddOnLibraryDto;
@@ -159,6 +161,11 @@ public class AddOnLibrary implements Library {
   /** The information about the add-on library. */
   private final LibraryInfo libraryInfo;
 
+  /** Full immutable metadata, retained through campaign and network DTO round trips. */
+  private final AddOnLibraryDto definition;
+
+  private final AddOnManifest compatibilityManifest;
+
   /**
    * Class used to represent Drop In Libraries.
    *
@@ -177,6 +184,9 @@ public class AddOnLibrary implements Library {
       AddonSlashCommandsDto slashCommandsDto,
       Map<String, Pair<MD5Key, Type>> pathAssetMap) {
     Objects.requireNonNull(dto, I18N.getText("library.error.invalidDefinition"));
+    AddOnCompatibility.validateMetadata(dto);
+    definition = dto;
+    compatibilityManifest = AddOnCompatibility.fromDto(dto);
     name = Objects.requireNonNull(dto.getName(), I18N.getText("library.error.emptyName"));
     version =
         Objects.requireNonNull(dto.getVersion(), I18N.getText("library.error.emptyVersion", name));
@@ -582,6 +592,14 @@ public class AddOnLibrary implements Library {
    */
   public MD5Key getAssetKey() {
     return assetKey;
+  }
+
+  public AddOnLibraryDto toDetailsDto() {
+    return definition;
+  }
+
+  public AddOnManifest getCompatibilityManifest() {
+    return compatibilityManifest;
   }
 
   /**

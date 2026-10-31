@@ -93,5 +93,7 @@ message Message {
     UpdateWallDataMsg update_wall_data_msg = 77;
     PutLookupTableMsg update_lookup_table_msg = 78;
     DeleteLookupTableMsg delete_lookup_table_msg = 79;
+    CampaignContentCommandMsg campaign_content_command_msg = 90;
+    CampaignContentSnapshotMsg campaign_content_snapshot_msg = 91;
   }
 }

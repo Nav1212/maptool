@@ -80,6 +80,9 @@ public class ServerMessageHandler implements MessageHandler {
       }
 
       switch (msgType) {
+        case CAMPAIGN_CONTENT_COMMAND_MSG ->
+            net.rptools.maptool.server.content.ContentServerProtocol.handle(
+                server, id, msg.getCampaignContentCommandMsg());
         case UPDATE_MASK_TOPOLOGY_MSG -> {
           handle(msg.getUpdateMaskTopologyMsg());
           sendToClients(id, msg);
@@ -184,8 +187,7 @@ public class ServerMessageHandler implements MessageHandler {
         }
         case SEND_TOKENS_TO_BACK_MSG -> handle(msg.getSendTokensToBackMsg());
         case SET_CAMPAIGN_MSG -> {
-          handle(msg.getSetCampaignMsg());
-          sendToClients(id, msg);
+          handleCampaignReplacement(id, msg);
         }
         case SET_CAMPAIGN_NAME_MSG -> {
           handle(msg.getSetCampaignNameMsg());
@@ -478,10 +480,40 @@ public class ServerMessageHandler implements MessageHandler {
         });
   }
 
-  private void handle(SetCampaignMsg msg) {
+  private void handleCampaignReplacement(String connectionId, Message message) {
     EventQueue.invokeLater(
         () -> {
-          server.setCampaign(Campaign.fromDto(msg.getCampaign()));
+          // Check the installed connection at execution time: a disconnected or demoted sender
+          // must not replace the campaign or make clients clear their private content views.
+          var sender = server.getPlayerForConnection(connectionId);
+          if (sender == null || !sender.isGM()) {
+            log.warn("Rejected campaign replacement from connection {}", connectionId);
+            return;
+          }
+          try {
+            var request = message.getSetCampaignMsg();
+            var previous = server.getCampaign();
+            var candidate = Campaign.fromDto(request.getCampaign());
+            String privateJson =
+                request.hasPrivateContentJson()
+                    ? request.getPrivateContentJson()
+                    : (candidate.getId().equals(previous.getId())
+                        ? previous.getCampaignContentJson()
+                        : "");
+            long revision =
+                net.rptools.maptool.content.ContentRevisionState.replacementRevision(
+                    previous.getCampaignContentRevision(), candidate.getCampaignContentRevision());
+            candidate.installCampaignContentSnapshot(privateJson, revision);
+            server.setCampaign(candidate);
+            sendToClients(
+                connectionId,
+                net.rptools.maptool.server.content.CampaignContentWire.publicReplacement(
+                    request, candidate.toDto()));
+            server.sendCampaignContentSnapshots();
+          } catch (IllegalArgumentException failure) {
+            log.warn(
+                "Rejected invalid campaign replacement from connection {}", connectionId, failure);
+          }
         });
   }
 
