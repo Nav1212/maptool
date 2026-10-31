@@ -1,0 +1,43 @@
+Reference run: Debian 13 x86_64, JavaFX 22 Linux Maven artifact.
+
+Artifact URL:
+https://repo.maven.apache.org/maven2/org/openjfx/javafx-media/22/javafx-media-22-linux.jar
+SHA-256: 9151b4ae4913463050d96bd34c840ea2fea23da278ef5051caf0e7f257644d1a
+
+Verified jar native plugin entries (unzip -l):
+libavplugin-54.so
+libavplugin-56.so
+libavplugin-57.so
+libavplugin-ffmpeg-56.so
+libavplugin-ffmpeg-57.so
+libavplugin-ffmpeg-58.so
+libavplugin-ffmpeg-59.so
+libavplugin-ffmpeg-60.so
+libgstreamer-lite.so
+libjfxmedia.so
+libfxplugins.so
+
+Host /usr/lib/x86_64-linux-gnu library entries:
+libavcodec.so.61 -> libavcodec.so.61.19.101
+libavformat.so.61 -> libavformat.so.61.7.103
+libavutil.so.59 -> libavutil.so.59.39.100
+
+After extracting the published libavplugin-ffmpeg-60.so, ldd reports:
+libavcodec.so.60 => not found
+libavformat.so.60 => not found
+
+The plugin's libgstreamer-lite.so is supplied by the same JavaFX jar and is
+loaded by the JavaFX runtime; an isolated ldd outside that runtime also does
+not search that extracted location automatically. That is not evidence that
+the jar lacks GStreamer. The meaningful host incompatibility above is the
+missing external FFmpeg .60 ABI (and corresponding absence of supported
+older ABIs), together with the observed MediaPlayer creation failure.
+
+Observed JavaFX error:
+MediaException: UNKNOWN : com.sun.media.jfxmedia.MediaException:
+Could not create player! : com.sun.media.jfxmedia.MediaException:
+Could not create player!
+
+No library aliases, TLS bypass, checksum changes, or external decoder
+installation were used. This experiment does not establish video decode
+support or performance on any operating system.

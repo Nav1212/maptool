@@ -21,4 +21,6 @@ dependencies {
     implementation(libs.rptools.dice.roller)
 
     implementation(libs.javatuples)
+
+    testImplementation(libs.gson)
 }
