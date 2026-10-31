@@ -1,7 +1,9 @@
 # Animated map backgrounds: bounded discovery (MEDIA-4)
 
-Status: discovery completed with concrete native-codec and application-build
-blockers; production format/rendering support remains unapproved and unverified.
+Status: bounded experiment completed with concrete native-codec and application-build
+blockers. MEDIA-4 remains partially validated because native decoding, playback
+performance, and pause/disposal checks could not execute; production support remains
+unverified.
 
 Decision: retain the static map as the reliable baseline. Evaluate a bounded
 JavaFX-to-Graphics2D frame bridge at the board layer before changing MapTool's
