@@ -124,7 +124,7 @@
     },
     {
       "id": "MEDIA-EPIC",
-      "state": "not_started",
+      "state": "in_progress",
       "detail": "Tracking epic; child acceptance criteria remain open."
     },
     {
@@ -149,7 +149,7 @@
     },
     {
       "id": "ACCESS-EPIC",
-      "state": "not_started",
+      "state": "in_progress",
       "detail": "Tracking epic; child acceptance criteria remain open."
     },
     {

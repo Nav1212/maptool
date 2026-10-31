@@ -36,12 +36,12 @@ GitHub API reads now work, but Issues is disabled and the integration cannot cha
 | [SCENE-4](issues/SCENE-4.md) | partial | Committed segment enter/exit/crossing consumption and activation receipts tested. Desktop movement/event integration remains incomplete. |
 | [SCENE-5](issues/SCENE-5.md) | not_started | No implementation acceptance claimed yet. |
 | [SCENE-6](issues/SCENE-6.md) | completed_discovery | Accepted linked-map floor architecture; 4 prototype tests passed. Native floors remain a separate production milestone; current blocker and next native experiment are recorded in docs/adr/scene-floors.md. |
-| [MEDIA-EPIC](issues/MEDIA-EPIC.md) | not_started | Tracking epic; child acceptance criteria remain open. |
+| [MEDIA-EPIC](issues/MEDIA-EPIC.md) | in_progress | Tracking epic; child acceptance criteria remain open. |
 | [MEDIA-1](issues/MEDIA-1.md) | not_started | No implementation acceptance claimed yet. |
 | [MEDIA-2](issues/MEDIA-2.md) | not_started | No implementation acceptance claimed yet. |
 | [MEDIA-3](issues/MEDIA-3.md) | not_started | No implementation acceptance claimed yet. |
 | [MEDIA-4](issues/MEDIA-4.md) | partial_discovery | Pinned JavaFX evidence, renderer ADR and measured static-fallback fixture completed. Native video decode/pause/disposal metrics remain unverified because this host has FFmpeg ABI 61 and JavaFX22 plugins support through ABI 60. |
-| [ACCESS-EPIC](issues/ACCESS-EPIC.md) | not_started | Tracking epic; child acceptance criteria remain open. |
+| [ACCESS-EPIC](issues/ACCESS-EPIC.md) | in_progress | Tracking epic; child acceptance criteria remain open. |
 | [ACCESS-1](issues/ACCESS-1.md) | not_started | No implementation acceptance claimed yet. |
 | [ACCESS-6](issues/ACCESS-6.md) | not_started | No implementation acceptance claimed yet. |
 | [ACCESS-3](issues/ACCESS-3.md) | not_started | No implementation acceptance claimed yet. |
