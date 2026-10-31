@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+import net.rptools.maptool.addon.InstallationPlanner;
 import net.rptools.maptool.client.MapTool;
 import net.rptools.maptool.client.MapToolMacroContext;
 import net.rptools.maptool.client.macro.MacroLocation;
@@ -32,6 +33,7 @@ import net.rptools.maptool.model.library.addon.AddOnLibraryData;
 import net.rptools.maptool.model.library.addon.AddOnLibraryManager;
 import net.rptools.maptool.model.library.addon.AddOnSlashCommandManager;
 import net.rptools.maptool.model.library.addon.TransferableAddOnLibrary;
+import net.rptools.maptool.model.library.addon.compatibility.AddOnCompatibility;
 import net.rptools.maptool.model.library.builtin.BuiltInLibraryManager;
 import net.rptools.maptool.model.library.proto.AddOnLibraryListDto;
 import net.rptools.maptool.model.library.token.LibraryTokenManager;
@@ -165,16 +167,40 @@ public class LibraryManager {
    * @param addOn the Add On to register.
    */
   public boolean registerAddOnLibrary(AddOnLibrary addOn) {
+    return registerAddOnLibraries(List.of(addOn), false);
+  }
+
+  public InstallationPlanner.Plan preflightAddOnLibraries(
+      List<AddOnLibrary> libraries, boolean replaceExisting) {
+    return addOnLibraryManager.preflight(libraries, replaceExisting);
+  }
+
+  /** Imports a dependency set together, rather than depending on archive/network arrival order. */
+  public boolean registerAddOnLibraries(List<AddOnLibrary> libraries, boolean replaceExisting) {
     try {
-      addOnLibraryManager.registerLibrary(addOn);
-      if (MapTool.isHostingServer()) {
-        MapTool.serverCommand().addAddOnLibrary(List.of(new TransferableAddOnLibrary(addOn)));
+      var transfers = new ArrayList<TransferableAddOnLibrary>();
+      for (var library : libraries) transfers.add(new TransferableAddOnLibrary(library));
+      addOnLibraryManager.registerLibraries(libraries, replaceExisting);
+      if (MapTool.isHostingServer() && !transfers.isEmpty()) {
+        MapTool.serverCommand().addAddOnLibrary(transfers);
       }
-    } catch (ExecutionException | InterruptedException | IllegalStateException e) {
+      return true;
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      log.error("Add-on registration interrupted", e);
+      return false;
+    } catch (ExecutionException | IllegalStateException e) {
       log.error("Error registering add-on in library", e);
+      javax.swing.SwingUtilities.invokeLater(() -> MapTool.showError(e.getMessage(), e));
       return false;
     }
-    return true;
+  }
+
+  public String getAddOnCompatibilityDescription(String namespace) {
+    var library = addOnLibraryManager.getLibrary(namespace);
+    return library instanceof AddOnLibrary addOn
+        ? AddOnCompatibility.describe(addOn.getCompatibilityManifest())
+        : "";
   }
 
   /**
@@ -195,18 +221,7 @@ public class LibraryManager {
    * @param addOnLibrary the add-on in library to register.
    */
   public boolean reregisterAddOnLibrary(AddOnLibrary addOnLibrary) {
-    try {
-      addOnLibraryManager.deregisterLibrary(addOnLibrary.getNamespace().get());
-      addOnLibraryManager.registerLibrary(addOnLibrary);
-      if (MapTool.isHostingServer()) {
-        MapTool.serverCommand()
-            .addAddOnLibrary(List.of(new TransferableAddOnLibrary(addOnLibrary)));
-      }
-    } catch (InterruptedException | ExecutionException e) {
-      log.error("Error registering add-on in library", e);
-      return false;
-    }
-    return true;
+    return registerAddOnLibraries(List.of(addOnLibrary), true);
   }
 
   /**

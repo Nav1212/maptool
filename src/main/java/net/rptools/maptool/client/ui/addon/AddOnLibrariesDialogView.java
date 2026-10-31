@@ -24,6 +24,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import javax.swing.JButton;
@@ -236,7 +237,10 @@ public class AddOnLibrariesDialogView extends JDialog {
       addOnWebsiteLabel.setText(addOn.website());
       addOnGitUrlLabel.setText(addOn.gitUrl());
       addOnLicenseLabel.setText(addOn.license());
-      addOnDescriptionTextPane.setText(addOn.description());
+      addOnDescriptionTextPane.setText(
+          addOn.description()
+              + "\n\n"
+              + new LibraryManager().getAddOnCompatibilityDescription(addOn.namespace()));
       viewLicenseFileButton.setEnabled(
           addOn.licenseFile() != null && !addOn.licenseFile().isEmpty());
       viewReadMeFileButton.setEnabled(addOn.readMeFile() != null && !addOn.readMeFile().isEmpty());
@@ -261,11 +265,15 @@ public class AddOnLibrariesDialogView extends JDialog {
         var addOnLibrary = new AddOnLibraryImporter().importFromFile(libFile);
         var libraryManager = new LibraryManager();
         String namespace = addOnLibrary.getNamespace().get();
+        var plan = libraryManager.preflightAddOnLibraries(List.of(addOnLibrary), true);
+        if (!plan.canInstall()) {
+          MapTool.showError(plan.summary());
+          return;
+        }
         if (libraryManager.addOnLibraryExists(addOnLibrary.getNamespace().get())) {
           if (!MapTool.confirm(I18N.getText("library.error.addOnLibraryExists", namespace))) {
             return;
           }
-          libraryManager.deregisterAddOnLibrary(namespace);
         }
         libraryManager.reregisterAddOnLibrary(addOnLibrary);
       } catch (IOException | InterruptedException | ExecutionException e) {

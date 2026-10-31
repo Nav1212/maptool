@@ -42,13 +42,11 @@ import net.rptools.lib.cipher.PublicPrivateKeyStore;
 import net.rptools.maptool.client.MapTool;
 import net.rptools.maptool.client.MapToolClient;
 import net.rptools.maptool.language.I18N;
-import net.rptools.maptool.model.Asset;
-import net.rptools.maptool.model.AssetManager;
 import net.rptools.maptool.model.campaign.CampaignManager;
 import net.rptools.maptool.model.gamedata.DataStoreManager;
 import net.rptools.maptool.model.gamedata.GameDataImporter;
 import net.rptools.maptool.model.library.LibraryManager;
-import net.rptools.maptool.model.library.addon.AddOnLibraryImporter;
+import net.rptools.maptool.model.library.addon.compatibility.AddOnLibraryLoader;
 import net.rptools.maptool.model.player.Player.Role;
 import net.rptools.maptool.server.proto.*;
 import net.rptools.maptool.server.proto.HandshakeMsg.MessageTypeCase;
@@ -365,27 +363,22 @@ public class ClientHandshake implements Handshake<Void>, MessageHandler {
           MapTool.getFrame().getToolbarPanel().setTokenSelectionGroupEnabled(false);
           log.info("No individual views, disabling FoW buttons");
         }
-        var libraryManager = new LibraryManager();
-        for (var library : connectionSuccessfulMsg.getAddOnLibraryListDto().getLibrariesList()) {
-          var md5key = new MD5Key(library.getMd5Hash());
-          AssetManager.getAssetAsynchronously(
-              md5key,
-              a -> {
-                Asset asset = AssetManager.getAsset(a);
-                try {
-                  var addOnLibrary = new AddOnLibraryImporter().importFromAsset(asset);
-                  libraryManager.reregisterAddOnLibrary(addOnLibrary);
-                } catch (IOException e) {
+        var keys =
+            connectionSuccessfulMsg.getAddOnLibraryListDto().getLibrariesList().stream()
+                .map(library -> new MD5Key(library.getMd5Hash()))
+                .toList();
+        AddOnLibraryLoader.load(keys)
+            .thenAccept(
+                libraries -> {
+                  if (MapTool.getClient() == client)
+                    new LibraryManager().registerAddOnLibraries(libraries, true);
+                })
+            .exceptionally(
+                error -> {
                   SwingUtilities.invokeLater(
-                      () -> {
-                        MapTool.showError(
-                            I18N.getText(
-                                "library.import.error", library.getDetails().getNamespace()),
-                            e);
-                      });
-                }
-              });
-        }
+                      () -> MapTool.showError("library.import.ioError", error));
+                  return null;
+                });
       }
     }
     setCurrentState(State.Success);
