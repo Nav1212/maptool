@@ -1,0 +1,805 @@
+{
+  "schema_version": 1,
+  "repository": "Nav1212/maptool",
+  "source_commit": "ee0f937c736b6dfe7c14ad2a950e818b05cf3b76",
+  "scope": "Concrete VTT roadmap gaps and a specialized single-map engine with interactive roll tiles and deterministic NPC automation; no claim to enumerate every possible defect.",
+  "duplicate_decisions": {},
+  "issues": [
+    {
+      "id": "PKG-EPIC",
+      "title": "[Epic]: Discover, install, and maintain compatible add-on packages",
+      "type": "epic",
+      "priority": "P1",
+      "size": "XL",
+      "depends_on": [],
+      "epic": null,
+      "tracks": [
+        "PKG-1",
+        "PKG-2",
+        "PKG-3"
+      ],
+      "body_file": "issues/PKG-EPIC.md"
+    },
+    {
+      "id": "PKG-1",
+      "title": "[Feature]: Browse and install add-ons from a versioned package catalog",
+      "type": "feature",
+      "priority": "P1",
+      "size": "L",
+      "depends_on": [],
+      "epic": "PKG-EPIC",
+      "body_file": "issues/PKG-1.md"
+    },
+    {
+      "id": "PKG-2",
+      "title": "[Feature]: Validate add-on compatibility and dependencies before activation",
+      "type": "feature",
+      "priority": "P1",
+      "size": "L",
+      "depends_on": [],
+      "epic": "PKG-EPIC",
+      "body_file": "issues/PKG-2.md"
+    },
+    {
+      "id": "PKG-3",
+      "title": "[Feature]: Preview add-on updates and restore the previous installed version",
+      "type": "feature",
+      "priority": "P2",
+      "size": "L",
+      "depends_on": [
+        "PKG-1",
+        "PKG-2"
+      ],
+      "epic": "PKG-EPIC",
+      "body_file": "issues/PKG-3.md"
+    },
+    {
+      "id": "SYS-EPIC",
+      "title": "[Epic]: Make rules frameworks, sheets, and campaign content discoverable",
+      "type": "epic",
+      "priority": "P1",
+      "size": "XL",
+      "depends_on": [],
+      "epic": null,
+      "tracks": [
+        "SYS-1",
+        "SYS-2",
+        "CONTENT-1",
+        "CONTENT-2",
+        "CONTENT-3",
+        "CONTENT-4"
+      ],
+      "body_file": "issues/SYS-EPIC.md"
+    },
+    {
+      "id": "CONTENT-1",
+      "title": "[Feature]: Browse searchable rules compendiums supplied by add-ons",
+      "type": "feature",
+      "priority": "P1",
+      "size": "L",
+      "depends_on": [],
+      "epic": "SYS-EPIC",
+      "body_file": "issues/CONTENT-1.md"
+    },
+    {
+      "id": "SYS-1",
+      "title": "[Feature]: Create campaigns from installed game-system profiles",
+      "type": "feature",
+      "priority": "P1",
+      "size": "L",
+      "depends_on": [
+        "PKG-2"
+      ],
+      "epic": "SYS-EPIC",
+      "body_file": "issues/SYS-1.md"
+    },
+    {
+      "id": "CONTENT-2",
+      "title": "[Feature]: Organize standalone campaign journals and share selected entries",
+      "type": "feature",
+      "priority": "P2",
+      "size": "L",
+      "depends_on": [],
+      "epic": "SYS-EPIC",
+      "body_file": "issues/CONTENT-2.md"
+    },
+    {
+      "id": "CONTENT-3",
+      "title": "[Feature]: Link journal entries to permission-aware map pins",
+      "type": "feature",
+      "priority": "P2",
+      "size": "L",
+      "depends_on": [
+        "CONTENT-2"
+      ],
+      "epic": "SYS-EPIC",
+      "body_file": "issues/CONTENT-3.md"
+    },
+    {
+      "id": "CONTENT-4",
+      "title": "[Feature]: Support framework-defined compendium drag-and-drop actions",
+      "type": "feature",
+      "priority": "P2",
+      "size": "L",
+      "depends_on": [
+        "CONTENT-1",
+        "SYS-2"
+      ],
+      "epic": "SYS-EPIC",
+      "body_file": "issues/CONTENT-4.md"
+    },
+    {
+      "id": "SYS-2",
+      "title": "[Feature]: Open registered interactive character sheets from tokens",
+      "type": "feature",
+      "priority": "P2",
+      "size": "L",
+      "depends_on": [
+        "SYS-1"
+      ],
+      "epic": "SYS-EPIC",
+      "body_file": "issues/SYS-2.md"
+    },
+    {
+      "id": "DEV-EPIC",
+      "title": "[Epic]: Provide a repeatable add-on authoring and validation workflow",
+      "type": "epic",
+      "priority": "P1",
+      "size": "XL",
+      "depends_on": [],
+      "epic": null,
+      "tracks": [
+        "DEV-1",
+        "DEV-2",
+        "DEV-3"
+      ],
+      "body_file": "issues/DEV-EPIC.md"
+    },
+    {
+      "id": "DEV-1",
+      "title": "[Feature]: Generate a versioned scripting inventory and publish a runnable add-on starter",
+      "type": "feature",
+      "priority": "P1",
+      "size": "M",
+      "depends_on": [],
+      "epic": "DEV-EPIC",
+      "body_file": "issues/DEV-1.md"
+    },
+    {
+      "id": "DEV-2",
+      "title": "[Feature]: Validate and reload a local add-on with actionable diagnostics",
+      "type": "feature",
+      "priority": "P2",
+      "size": "M",
+      "depends_on": [
+        "DEV-1"
+      ],
+      "epic": "DEV-EPIC",
+      "body_file": "issues/DEV-2.md"
+    },
+    {
+      "id": "DEV-3",
+      "title": "[Discovery]: Evaluate a bounded Foundry scene import path",
+      "type": "discovery",
+      "priority": "P3",
+      "size": "M",
+      "depends_on": [],
+      "epic": "DEV-EPIC",
+      "body_file": "issues/DEV-3.md"
+    },
+    {
+      "id": "SCENE-EPIC",
+      "title": "[Epic]: Build interactive scenes with doors, regions, and elevation",
+      "type": "epic",
+      "priority": "P1",
+      "size": "XL",
+      "depends_on": [],
+      "epic": null,
+      "tracks": [
+        "SCENE-1",
+        "SCENE-2",
+        "SCENE-3",
+        "SCENE-4",
+        "SCENE-5",
+        "SCENE-6"
+      ],
+      "body_file": "issues/SCENE-EPIC.md"
+    },
+    {
+      "id": "SCENE-1",
+      "title": "[Feature]: Add native doors with GM open and close controls",
+      "type": "feature",
+      "priority": "P1",
+      "size": "L",
+      "depends_on": [],
+      "epic": "SCENE-EPIC",
+      "body_file": "issues/SCENE-1.md"
+    },
+    {
+      "id": "SCENE-3",
+      "title": "[Feature]: Add persistent named scene regions and GM authoring tools",
+      "type": "feature",
+      "priority": "P1",
+      "size": "L",
+      "depends_on": [],
+      "epic": "SCENE-EPIC",
+      "body_file": "issues/SCENE-3.md"
+    },
+    {
+      "id": "SCENE-2",
+      "title": "[Feature]: Add player door interactions and GM-controlled locks",
+      "type": "feature",
+      "priority": "P2",
+      "size": "M",
+      "depends_on": [
+        "SCENE-1",
+        "ACCESS-6"
+      ],
+      "epic": "SCENE-EPIC",
+      "body_file": "issues/SCENE-2.md"
+    },
+    {
+      "id": "SCENE-4",
+      "title": "[Feature]: Execute trusted region enter, exit, and crossing triggers",
+      "type": "feature",
+      "priority": "P1",
+      "size": "L",
+      "depends_on": [
+        "SCENE-3",
+        "ACCESS-6"
+      ],
+      "epic": "SCENE-EPIC",
+      "body_file": "issues/SCENE-4.md"
+    },
+    {
+      "id": "SCENE-5",
+      "title": "[Feature]: Add typed token elevation and optional elevation-aware measurement",
+      "type": "feature",
+      "priority": "P2",
+      "size": "L",
+      "depends_on": [],
+      "epic": "SCENE-EPIC",
+      "body_file": "issues/SCENE-5.md"
+    },
+    {
+      "id": "SCENE-6",
+      "title": "[Discovery]: Define floor-aware maps and visibility with a bounded design prototype",
+      "type": "discovery",
+      "priority": "P3",
+      "size": "M",
+      "depends_on": [
+        "SCENE-5"
+      ],
+      "epic": "SCENE-EPIC",
+      "body_file": "issues/SCENE-6.md"
+    },
+    {
+      "id": "MEDIA-EPIC",
+      "title": "[Epic]: Provide integrated session audio and evaluate animated maps",
+      "type": "epic",
+      "priority": "P2",
+      "size": "XL",
+      "depends_on": [],
+      "epic": null,
+      "tracks": [
+        "MEDIA-1",
+        "MEDIA-2",
+        "MEDIA-3",
+        "MEDIA-4"
+      ],
+      "body_file": "issues/MEDIA-EPIC.md"
+    },
+    {
+      "id": "MEDIA-1",
+      "title": "[Feature]: Add GM ambient audio cues with shared playback state",
+      "type": "feature",
+      "priority": "P2",
+      "size": "L",
+      "depends_on": [
+        "ACCESS-6"
+      ],
+      "epic": "MEDIA-EPIC",
+      "body_file": "issues/MEDIA-1.md"
+    },
+    {
+      "id": "MEDIA-2",
+      "title": "[Feature]: Add map-local ambient sound sources with distance attenuation",
+      "type": "feature",
+      "priority": "P2",
+      "size": "L",
+      "depends_on": [
+        "MEDIA-1"
+      ],
+      "epic": "MEDIA-EPIC",
+      "body_file": "issues/MEDIA-2.md"
+    },
+    {
+      "id": "MEDIA-3",
+      "title": "[Feature]: Manage reusable playlists and scene audio transitions",
+      "type": "feature",
+      "priority": "P2",
+      "size": "L",
+      "depends_on": [
+        "MEDIA-1"
+      ],
+      "epic": "MEDIA-EPIC",
+      "body_file": "issues/MEDIA-3.md"
+    },
+    {
+      "id": "MEDIA-4",
+      "title": "[Discovery]: Prototype animated map backgrounds and document supported media limits",
+      "type": "discovery",
+      "priority": "P3",
+      "size": "M",
+      "depends_on": [],
+      "epic": "MEDIA-EPIC",
+      "body_file": "issues/MEDIA-4.md"
+    },
+    {
+      "id": "ACCESS-EPIC",
+      "title": "[Epic]: Simplify joining and establish a browser player path",
+      "type": "epic",
+      "priority": "P1",
+      "size": "XL",
+      "depends_on": [],
+      "epic": null,
+      "tracks": [
+        "ACCESS-1",
+        "ACCESS-2",
+        "ACCESS-6",
+        "ACCESS-3",
+        "ACCESS-4",
+        "ACCESS-5"
+      ],
+      "body_file": "issues/ACCESS-EPIC.md"
+    },
+    {
+      "id": "ACCESS-1",
+      "title": "[Feature]: Add connection preflight diagnostics and actionable join guidance",
+      "type": "feature",
+      "priority": "P1",
+      "size": "M",
+      "depends_on": [],
+      "epic": "ACCESS-EPIC",
+      "body_file": "issues/ACCESS-1.md"
+    },
+    {
+      "id": "ACCESS-6",
+      "title": "[Engineering]: Define authorization contracts for new scene, audio, and browser commands",
+      "type": "engineering",
+      "priority": "P1",
+      "size": "L",
+      "depends_on": [],
+      "epic": "ACCESS-EPIC",
+      "body_file": "issues/ACCESS-6.md"
+    },
+    {
+      "id": "ACCESS-3",
+      "title": "[Feature]: Guide new GMs and players through their first successful session",
+      "type": "feature",
+      "priority": "P2",
+      "size": "M",
+      "depends_on": [
+        "ACCESS-1"
+      ],
+      "epic": "ACCESS-EPIC",
+      "body_file": "issues/ACCESS-3.md"
+    },
+    {
+      "id": "ACCESS-2",
+      "title": "[Discovery]: Define a browser companion architecture and validate a minimal protocol slice",
+      "type": "discovery",
+      "priority": "P3",
+      "size": "M",
+      "depends_on": [
+        "ACCESS-6"
+      ],
+      "epic": "ACCESS-EPIC",
+      "body_file": "issues/ACCESS-2.md"
+    },
+    {
+      "id": "ACCESS-4",
+      "title": "[Feature]: Deliver a bounded browser player client for map viewing and owned-token movement",
+      "type": "feature",
+      "priority": "P3",
+      "size": "XL",
+      "depends_on": [
+        "ACCESS-2",
+        "ACCESS-6"
+      ],
+      "epic": "ACCESS-EPIC",
+      "body_file": "issues/ACCESS-4.md"
+    },
+    {
+      "id": "ACCESS-5",
+      "title": "[Feature]: Define configurable session role presets for observers and assistant GMs",
+      "type": "feature",
+      "priority": "P3",
+      "size": "L",
+      "depends_on": [
+        "ACCESS-6"
+      ],
+      "epic": "ACCESS-EPIC",
+      "body_file": "issues/ACCESS-5.md"
+    },
+    {
+      "id": "MAPAUTO-EPIC",
+      "type": "epic",
+      "priority": "P1",
+      "size": "XL",
+      "epic": null,
+      "depends_on": [],
+      "title": "[Epic]: Specialize the engine for a reusable single-map automated encounter",
+      "body_file": "issues/MAPAUTO-EPIC.md",
+      "tracks": [
+        "MAPAUTO-1",
+        "MAPAUTO-2",
+        "MAPAUTO-3",
+        "MAPAUTO-4",
+        "MAPAUTO-5"
+      ]
+    },
+    {
+      "id": "MAPAUTO-1",
+      "type": "feature",
+      "priority": "P1",
+      "size": "L",
+      "epic": "MAPAUTO-EPIC",
+      "depends_on": [],
+      "title": "[Feature]: Add a focused single-map encounter workspace and reusable encounter package",
+      "body_file": "issues/MAPAUTO-1.md"
+    },
+    {
+      "id": "MAPAUTO-2",
+      "type": "feature",
+      "priority": "P1",
+      "size": "L",
+      "epic": "MAPAUTO-EPIC",
+      "depends_on": [
+        "MAPAUTO-1",
+        "ACCESS-6"
+      ],
+      "title": "[Feature]: Add an authoritative map clock and deterministic automation queue",
+      "body_file": "issues/MAPAUTO-2.md"
+    },
+    {
+      "id": "MAPAUTO-3",
+      "type": "feature",
+      "priority": "P2",
+      "size": "L",
+      "epic": "MAPAUTO-EPIC",
+      "depends_on": [
+        "MAPAUTO-1",
+        "MAPAUTO-2"
+      ],
+      "title": "[Feature]: Save encounter checkpoints and reset map automation to a chosen baseline",
+      "body_file": "issues/MAPAUTO-3.md"
+    },
+    {
+      "id": "MAPAUTO-4",
+      "type": "feature",
+      "priority": "P1",
+      "size": "L",
+      "epic": "MAPAUTO-EPIC",
+      "depends_on": [
+        "MAPAUTO-2"
+      ],
+      "title": "[Feature]: Give the GM a map automation console with preview, pause, and action history",
+      "body_file": "issues/MAPAUTO-4.md"
+    },
+    {
+      "id": "TILE-EPIC",
+      "type": "epic",
+      "priority": "P1",
+      "size": "XL",
+      "epic": null,
+      "depends_on": [],
+      "title": "[Epic]: Build editable interactive tiles with automatic checks and outcomes",
+      "body_file": "issues/TILE-EPIC.md",
+      "tracks": [
+        "TILE-1",
+        "TILE-2",
+        "TILE-3",
+        "TILE-4",
+        "TILE-5",
+        "TILE-6",
+        "TILE-7",
+        "TILE-8"
+      ]
+    },
+    {
+      "id": "TILE-1",
+      "type": "feature",
+      "priority": "P1",
+      "size": "L",
+      "epic": "TILE-EPIC",
+      "depends_on": [
+        "SCENE-3",
+        "SCENE-4",
+        "MAPAUTO-1"
+      ],
+      "title": "[Feature]: Bind interactive tiles to map regions and objects through a visual inspector",
+      "body_file": "issues/TILE-1.md"
+    },
+    {
+      "id": "TILE-2",
+      "type": "feature",
+      "priority": "P1",
+      "size": "L",
+      "epic": "TILE-EPIC",
+      "depends_on": [
+        "TILE-1",
+        "TILE-7"
+      ],
+      "title": "[Feature]: Automatically roll tile dice, skill checks, and saves using a configurable rules adapter",
+      "body_file": "issues/TILE-2.md"
+    },
+    {
+      "id": "TILE-3",
+      "type": "feature",
+      "priority": "P1",
+      "size": "L",
+      "epic": "TILE-EPIC",
+      "depends_on": [
+        "TILE-2",
+        "TILE-7"
+      ],
+      "title": "[Feature]: Configure ordered tile actions for check success, failure, and other outcomes",
+      "body_file": "issues/TILE-3.md"
+    },
+    {
+      "id": "TILE-4",
+      "type": "feature",
+      "priority": "P1",
+      "size": "M",
+      "epic": "TILE-EPIC",
+      "depends_on": [
+        "TILE-1",
+        "TILE-7",
+        "MAPAUTO-2"
+      ],
+      "title": "[Feature]: Control tile repeat, cooldown, and per-token activation policies",
+      "body_file": "issues/TILE-4.md"
+    },
+    {
+      "id": "TILE-5",
+      "type": "feature",
+      "priority": "P1",
+      "size": "L",
+      "epic": "TILE-EPIC",
+      "depends_on": [
+        "TILE-2",
+        "TILE-3",
+        "TILE-4",
+        "SCENE-3",
+        "SCENE-4",
+        "MAPAUTO-2"
+      ],
+      "title": "[Feature]: Add editable hazard, pressure-plate, and template-area tile presets",
+      "body_file": "issues/TILE-5.md"
+    },
+    {
+      "id": "TILE-6",
+      "type": "feature",
+      "priority": "P2",
+      "size": "L",
+      "epic": "TILE-EPIC",
+      "depends_on": [
+        "TILE-1",
+        "TILE-2",
+        "TILE-3",
+        "TILE-4",
+        "TILE-7"
+      ],
+      "title": "[Feature]: Operate map objects through code-free interact, lock, and state presets",
+      "body_file": "issues/TILE-6.md"
+    },
+    {
+      "id": "TILE-7",
+      "type": "feature",
+      "priority": "P1",
+      "size": "L",
+      "epic": "TILE-EPIC",
+      "depends_on": [
+        "TILE-1",
+        "SCENE-4",
+        "MAPAUTO-2"
+      ],
+      "title": "[Feature]: Record authoritative tile rolls and idempotent outcome steps across clients",
+      "body_file": "issues/TILE-7.md"
+    },
+    {
+      "id": "TILE-8",
+      "type": "feature",
+      "priority": "P2",
+      "size": "M",
+      "epic": "TILE-EPIC",
+      "depends_on": [
+        "TILE-2",
+        "TILE-3",
+        "TILE-4",
+        "TILE-5",
+        "TILE-6",
+        "TILE-7",
+        "MAPAUTO-4",
+        "MAPAUTO-5"
+      ],
+      "title": "[Feature]: Save reusable tile recipes and extend the starter scenario with tile traces",
+      "body_file": "issues/TILE-8.md"
+    },
+    {
+      "id": "NPC-EPIC",
+      "type": "epic",
+      "priority": "P1",
+      "size": "XL",
+      "epic": null,
+      "depends_on": [],
+      "title": "[Epic]: Run configurable NPC automation inside one authoritative map runtime",
+      "body_file": "issues/NPC-EPIC.md",
+      "tracks": [
+        "NPC-1",
+        "NPC-2",
+        "NPC-3",
+        "NPC-4",
+        "NPC-5",
+        "NPC-6",
+        "NPC-7",
+        "NPC-8",
+        "NPC-9"
+      ]
+    },
+    {
+      "id": "NPC-1",
+      "type": "feature",
+      "priority": "P1",
+      "size": "M",
+      "epic": "NPC-EPIC",
+      "depends_on": [
+        "MAPAUTO-1",
+        "ACCESS-6"
+      ],
+      "title": "[Feature]: Add versioned NPC automation profiles and explicit per-map activation",
+      "body_file": "issues/NPC-1.md"
+    },
+    {
+      "id": "NPC-2",
+      "type": "feature",
+      "priority": "P1",
+      "size": "L",
+      "epic": "NPC-EPIC",
+      "depends_on": [
+        "NPC-1",
+        "NPC-4",
+        "NPC-5"
+      ],
+      "title": "[Feature]: Author NPC waypoint patrols with loops, waits, and blocked-route behavior",
+      "body_file": "issues/NPC-2.md"
+    },
+    {
+      "id": "NPC-3",
+      "type": "feature",
+      "priority": "P2",
+      "size": "L",
+      "epic": "NPC-EPIC",
+      "depends_on": [
+        "NPC-1",
+        "MAPAUTO-2",
+        "SCENE-3"
+      ],
+      "title": "[Feature]: Add observer-specific NPC perception and deterministic behavior states",
+      "body_file": "issues/NPC-3.md"
+    },
+    {
+      "id": "NPC-4",
+      "type": "feature",
+      "priority": "P1",
+      "size": "L",
+      "epic": "NPC-EPIC",
+      "depends_on": [
+        "NPC-1",
+        "MAPAUTO-2",
+        "ACCESS-6"
+      ],
+      "title": "[Feature]: Schedule NPC turns and real-time decisions through the shared map clock",
+      "body_file": "issues/NPC-4.md"
+    },
+    {
+      "id": "NPC-5",
+      "type": "feature",
+      "priority": "P1",
+      "size": "L",
+      "epic": "NPC-EPIC",
+      "depends_on": [
+        "NPC-1",
+        "SCENE-4",
+        "ACCESS-6"
+      ],
+      "title": "[Feature]: Execute NPC movement within budgets, collisions, and live map topology",
+      "body_file": "issues/NPC-5.md"
+    },
+    {
+      "id": "NPC-6",
+      "type": "feature",
+      "priority": "P2",
+      "size": "L",
+      "epic": "NPC-EPIC",
+      "depends_on": [
+        "NPC-1",
+        "NPC-3",
+        "NPC-4",
+        "NPC-5",
+        "ACCESS-6",
+        "TILE-2"
+      ],
+      "title": "[Feature]: Choose and execute NPC actions with configurable rules and recorded rolls",
+      "body_file": "issues/NPC-6.md"
+    },
+    {
+      "id": "NPC-7",
+      "type": "feature",
+      "priority": "P2",
+      "size": "M",
+      "epic": "NPC-EPIC",
+      "depends_on": [
+        "MAPAUTO-4",
+        "NPC-2",
+        "NPC-3",
+        "NPC-4",
+        "NPC-6",
+        "ACCESS-6"
+      ],
+      "title": "[Feature]: Extend the GM runtime console with NPC pause, step, override, and decision inspection",
+      "body_file": "issues/NPC-7.md"
+    },
+    {
+      "id": "NPC-8",
+      "type": "engineering",
+      "priority": "P2",
+      "size": "M",
+      "epic": "NPC-EPIC",
+      "depends_on": [
+        "NPC-2",
+        "NPC-3",
+        "NPC-5",
+        "NPC-6",
+        "NPC-7",
+        "MAPAUTO-2"
+      ],
+      "title": "[Engineering]: Add deterministic NPC scenario replay and bounded-work regression fixtures",
+      "body_file": "issues/NPC-8.md"
+    },
+    {
+      "id": "NPC-9",
+      "type": "feature",
+      "priority": "P2",
+      "size": "M",
+      "epic": "NPC-EPIC",
+      "depends_on": [
+        "NPC-5",
+        "NPC-6",
+        "SCENE-1",
+        "SCENE-2",
+        "ACCESS-6"
+      ],
+      "title": "[Feature]: Let eligible NPCs operate unlocked doors along an authored route",
+      "body_file": "issues/NPC-9.md"
+    },
+    {
+      "id": "MAPAUTO-5",
+      "type": "feature",
+      "priority": "P2",
+      "size": "M",
+      "epic": "MAPAUTO-EPIC",
+      "depends_on": [
+        "MAPAUTO-3",
+        "MAPAUTO-4",
+        "TILE-2",
+        "TILE-3",
+        "NPC-1",
+        "NPC-2"
+      ],
+      "title": "[Feature]: Ship a playable single-map starter with tile checks and patrolling NPCs",
+      "body_file": "issues/MAPAUTO-5.md"
+    }
+  ]
+}
