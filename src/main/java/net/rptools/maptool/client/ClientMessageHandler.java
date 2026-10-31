@@ -62,8 +62,8 @@ import net.rptools.maptool.model.drawing.Pen;
 import net.rptools.maptool.model.gamedata.DataStoreManager;
 import net.rptools.maptool.model.gamedata.GameDataImporter;
 import net.rptools.maptool.model.library.LibraryManager;
-import net.rptools.maptool.model.library.addon.AddOnLibraryImporter;
 import net.rptools.maptool.model.library.addon.TransferableAddOnLibrary;
+import net.rptools.maptool.model.library.addon.compatibility.AddOnLibraryLoader;
 import net.rptools.maptool.model.player.Player;
 import net.rptools.maptool.model.topology.Wall;
 import net.rptools.maptool.model.topology.WallTopology;
@@ -104,6 +104,9 @@ public class ClientMessageHandler implements MessageHandler {
       log.debug("{} got: {}", id, msgType);
 
       switch (msgType) {
+        case CAMPAIGN_CONTENT_SNAPSHOT_MSG ->
+            net.rptools.maptool.client.ui.content.ContentWorkspaceController.receive(
+                client, msg.getCampaignContentSnapshotMsg());
         case UPDATE_MASK_TOPOLOGY_MSG -> handle(msg.getUpdateMaskTopologyMsg());
         case BOOT_PLAYER_MSG -> handle(msg.getBootPlayerMsg());
         case CHANGE_ZONE_DISPLAY_NAME_MSG -> handle(msg.getChangeZoneDisplayNameMsg());
@@ -490,26 +493,22 @@ public class ClientMessageHandler implements MessageHandler {
   }
 
   private void handle(AddAddOnLibraryMsg msg) {
-    var addedLibs =
+    var keys =
         msg.getAddOnsList().stream()
             .map(TransferableAddOnLibrary::fromDto)
-            .collect(Collectors.toList());
-    for (var lib : addedLibs) {
-      AssetManager.getAssetAsynchronously(
-          lib.getAssetKey(),
-          a -> {
-            Asset asset = AssetManager.getAsset(a);
-            try {
-              var addOnLibrary = new AddOnLibraryImporter().importFromAsset(asset);
-              new LibraryManager().reregisterAddOnLibrary(addOnLibrary);
-            } catch (IOException e) {
-              SwingUtilities.invokeLater(
-                  () ->
-                      MapTool.showError(
-                          I18N.getText("library.import.error", lib.getNamespace()), e));
-            }
-          });
-    }
+            .map(TransferableAddOnLibrary::getAssetKey)
+            .toList();
+    AddOnLibraryLoader.load(keys)
+        .thenAccept(
+            libraries -> {
+              if (MapTool.getClient() == client)
+                new LibraryManager().registerAddOnLibraries(libraries, true);
+            })
+        .exceptionally(
+            error -> {
+              SwingUtilities.invokeLater(() -> MapTool.showError("library.import.ioError", error));
+              return null;
+            });
   }
 
   private void handle(UpdateAssetTransferMsg msg) {

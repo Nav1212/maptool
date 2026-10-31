@@ -98,6 +98,10 @@ public class ServerCommandClientImpl implements ServerCommand {
     } finally {
       campaign.setBeingSerialized(false);
     }
+    if (client.getPlayer().isGM()) {
+      // The host installs this atomically and strips it before forwarding the public campaign.
+      msg.setPrivateContentJson(campaign.getCampaignContentJson());
+    }
     makeServerCall(Message.newBuilder().setSetCampaignMsg(msg).build());
   }
 
