@@ -10,7 +10,7 @@ Existing lighting, topology, macro scripting, JavaScript, HTML interfaces, add-o
 
 **Prepared locally; not published as GitHub issues.** GitHub API reads now work and the all-state inventory is empty. Issues is disabled in the repository: issue creation returns HTTP 410, and enabling it through the integration returns HTTP 403. Enable **Settings → General → Features → Issues** in [repository settings](https://github.com/Nav1212/maptool/settings), then run the publisher. No new token is requested.
 
-See [implementation progress](IMPLEMENTATION.md) for code and validation work. No ticket has been marked resolved; component tests do not establish unfinished application/editor/multiplayer acceptance criteria. Full application validation currently needs the two JetBrains redirect domains already added to the saved environment draft.
+See [implementation progress](IMPLEMENTATION.md) for code and validation work. Two bounded discovery items are completed locally; component tests do not establish unfinished application/editor/multiplayer feature acceptance criteria. Full application validation currently needs the two JetBrains redirect domains already added to the saved environment draft.
 
 ## Scope and priorities
 

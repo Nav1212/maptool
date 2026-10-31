@@ -1,10 +1,12 @@
 # Implementation progress
 
-No roadmap ticket is marked resolved. This iteration adds tested engine and content foundations; acceptance criteria requiring application compilation, desktop UI or actual multiplayer remain open.
+Two bounded discovery items are completed locally: SCENE-6 and ACCESS-2. No GitHub issue has been created or closed. Feature acceptance requiring application compilation, desktop editors or actual multiplayer remains open.
+
+Implementation draft: [https://github.com/Nav1212/maptool/pull/2](https://github.com/Nav1212/maptool/pull/2). Roadmap draft: [https://github.com/Nav1212/maptool/pull/1](https://github.com/Nav1212/maptool/pull/1).
 
 ## Validation boundary
 
-Independent common/dice/clientserver/messages tests execute in this environment. Full application compilation and desktop launch are blocked by JetBrains artifact redirect domains. See `docs/single-map-runtime.md`, `docs/single-map-tiles.md`, `docs/single-map-npcs.md`, and `docs/addon-compatibility.md` for implemented contracts and limitations.
+A fresh combined run passed 247 Java tests with zero failures/errors/skips, plus all formatting checks. The browser fixture passed 11 HTTP tests and the publisher passed 12 offline tests. Full application compilation and desktop launch are blocked by JetBrains artifact redirect domains. See `docs/single-map-runtime.md`, `docs/single-map-tiles.md`, `docs/single-map-npcs.md`, and `docs/addon-compatibility.md` for implemented contracts and limitations.
 
 GitHub API reads now work, but Issues is disabled and the integration cannot change that setting. Enabling it requires [repository settings](https://github.com/Nav1212/maptool/settings). No issues were created or closed.
 
@@ -33,17 +35,17 @@ GitHub API reads now work, but Issues is disabled and the integration cannot cha
 | [SCENE-2](issues/SCENE-2.md) | not_started | No implementation acceptance claimed yet. |
 | [SCENE-4](issues/SCENE-4.md) | partial | Committed segment enter/exit/crossing consumption and activation receipts tested. Desktop movement/event integration remains incomplete. |
 | [SCENE-5](issues/SCENE-5.md) | not_started | No implementation acceptance claimed yet. |
-| [SCENE-6](issues/SCENE-6.md) | not_started | No implementation acceptance claimed yet. |
+| [SCENE-6](issues/SCENE-6.md) | completed_discovery | Accepted linked-map floor architecture; 4 prototype tests passed. Native floors remain a separate production milestone; current blocker and next native experiment are recorded in docs/adr/scene-floors.md. |
 | [MEDIA-EPIC](issues/MEDIA-EPIC.md) | not_started | Tracking epic; child acceptance criteria remain open. |
 | [MEDIA-1](issues/MEDIA-1.md) | not_started | No implementation acceptance claimed yet. |
 | [MEDIA-2](issues/MEDIA-2.md) | not_started | No implementation acceptance claimed yet. |
 | [MEDIA-3](issues/MEDIA-3.md) | not_started | No implementation acceptance claimed yet. |
-| [MEDIA-4](issues/MEDIA-4.md) | not_started | No implementation acceptance claimed yet. |
+| [MEDIA-4](issues/MEDIA-4.md) | partial_discovery | Pinned JavaFX evidence, renderer ADR and measured static-fallback fixture completed. Native video decode/pause/disposal metrics remain unverified because this host has FFmpeg ABI 61 and JavaFX22 plugins support through ABI 60. |
 | [ACCESS-EPIC](issues/ACCESS-EPIC.md) | not_started | Tracking epic; child acceptance criteria remain open. |
 | [ACCESS-1](issues/ACCESS-1.md) | not_started | No implementation acceptance claimed yet. |
 | [ACCESS-6](issues/ACCESS-6.md) | not_started | No implementation acceptance claimed yet. |
 | [ACCESS-3](issues/ACCESS-3.md) | not_started | No implementation acceptance claimed yet. |
-| [ACCESS-2](issues/ACCESS-2.md) | not_started | No implementation acceptance claimed yet. |
+| [ACCESS-2](issues/ACCESS-2.md) | completed_discovery | Browser boundary ADR and authenticated read-only projection fixture completed; 11 HTTP contract tests passed. Live MapTool interoperability is not claimed; exact next experiment documented. |
 | [ACCESS-4](issues/ACCESS-4.md) | not_started | No implementation acceptance claimed yet. |
 | [ACCESS-5](issues/ACCESS-5.md) | not_started | No implementation acceptance claimed yet. |
 | [MAPAUTO-EPIC](issues/MAPAUTO-EPIC.md) | in_progress | Tracking epic; child acceptance criteria remain open. |

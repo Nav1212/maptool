@@ -1,7 +1,10 @@
 {
   "repository": "Nav1212/maptool",
   "source_commit": "ee0f937c736b6dfe7c14ad2a950e818b05cf3b76",
-  "resolved": [],
+  "resolved": [
+    "SCENE-6",
+    "ACCESS-2"
+  ],
   "github": {
     "created": 0,
     "closed": 0,
@@ -116,8 +119,8 @@
     },
     {
       "id": "SCENE-6",
-      "state": "not_started",
-      "detail": "No implementation acceptance claimed yet."
+      "state": "completed_discovery",
+      "detail": "Accepted linked-map floor architecture; 4 prototype tests passed. Native floors remain a separate production milestone; current blocker and next native experiment are recorded in docs/adr/scene-floors.md."
     },
     {
       "id": "MEDIA-EPIC",
@@ -141,8 +144,8 @@
     },
     {
       "id": "MEDIA-4",
-      "state": "not_started",
-      "detail": "No implementation acceptance claimed yet."
+      "state": "partial_discovery",
+      "detail": "Pinned JavaFX evidence, renderer ADR and measured static-fallback fixture completed. Native video decode/pause/disposal metrics remain unverified because this host has FFmpeg ABI 61 and JavaFX22 plugins support through ABI 60."
     },
     {
       "id": "ACCESS-EPIC",
@@ -166,8 +169,8 @@
     },
     {
       "id": "ACCESS-2",
-      "state": "not_started",
-      "detail": "No implementation acceptance claimed yet."
+      "state": "completed_discovery",
+      "detail": "Browser boundary ADR and authenticated read-only projection fixture completed; 11 HTTP contract tests passed. Live MapTool interoperability is not claimed; exact next experiment documented."
     },
     {
       "id": "ACCESS-4",
@@ -304,5 +307,20 @@
       "state": "partial",
       "detail": "Real dicelib/tile/NPC composition exercised by integration fixtures. A playable desktop starter map and two-client walkthrough remain incomplete."
     }
-  ]
+  ],
+  "validation": {
+    "java_tests": 247,
+    "java_failures": 0,
+    "java_errors": 0,
+    "java_skipped": 0,
+    "browser_contract_tests": 11,
+    "publisher_tests": 12,
+    "formatting": "passed",
+    "application": "blocked before root Java compilation by JetBrains HTTP 403",
+    "video": "static fallback verified; native decoding blocked by FFmpeg ABI mismatch"
+  },
+  "pull_requests": {
+    "roadmap": "https://github.com/Nav1212/maptool/pull/1",
+    "implementation": "https://github.com/Nav1212/maptool/pull/2"
+  }
 }
