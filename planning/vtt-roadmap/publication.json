@@ -1,0 +1,7 @@
+{
+  "repository": "Nav1212/maptool",
+  "source_commit": "ee0f937c736b6dfe7c14ad2a950e818b05cf3b76",
+  "issues": {},
+  "status": "blocked",
+  "blocker": "GitHub Issues is disabled (issue creation HTTP 410); enabling Issues via repository PATCH is denied to the integration (HTTP 403). Enable Issues in repository Settings > General > Features, then rerun publication."
+}
